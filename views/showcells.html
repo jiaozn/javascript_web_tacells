@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- <meta name="description" content="learn javascript by www.liaoxuefeng.com"> -->
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/sbox.css">
+    <script src="/static/js/jquery.min.js"></script>
+
+    <script src="/static/js/vue.min.js"></script>
+    <script src="/static/js/vue-resource.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+
+    <script>
+
+        $(function () {
+            var vm = new Vue({
+                el: '#sinput',
+                data: {
+                    myData: [],//用来接收ajax得到的数据
+                    keyword: '',//v-model绑定的输入框的value
+                    now: -1,
+                    searchIndex: 0
+                },
+                methods: {
+                    // &event是实参，表示event对象
+                    get: function (ev) {
+                        // 如果按得键是上或者下，就不进行ajax
+                        if (ev.keyCode == 38 || ev.keyCode == 40) {
+                            return;
+                        }
+                        var that = this;
+                        that.$resource('/api/cells/' + that.keyword.toUpperCase()).get().then(function (res) {
+                            // console.log(JSON.parse(res));
+                            // that.myData = JSON.parse(res);
+                            that.myData = res.data;
+                            console.log('myData is:');
+                            console.log(that.myData);
+                        });
+                    },
+
+                    search: function (id) {
+                        //打开对应的搜索界面
+                        // window.open(this.logoData[this.searchIndex].searchSrc + this.keyword);
+                        console.log("we should be searching with id=..." + id);
+                        var that = this;
+                        that.$resource('/api/cell/' + id).get().then(function (res) {
+                            // console.log(JSON.parse(res));
+                            // that.myData = JSON.parse(res);
+                            vmone.id = res.data[0].id;
+                            vmone.cellid = res.data[0].cellid;
+                            vmone.cellname = res.data[0].cellname;
+                            vmone.azi = res.data[0].azi;
+                            vmone.mtilt = res.data[0].mtilt;
+                            vmone.etilt = res.data[0].etilt;
+                            console.log('thecell is:');
+                            console.log(vmone.cellname);
+                        });
+                    },
+                    selectHover: function (index) {
+                        this.now = index
+                    },
+                    selectClick: function (value) {
+                        this.keyword = value.cellname;
+                        this.search(value.id);
+                    },
+                    clearInput: function () {
+                        var that = this;
+                        that.keyword = '';
+                        that.myData.splice(0, that.myData.length);
+                        // $.get('/api/cell/' + that.keyword).then(function (res) {
+                        //     that.myData = res;
+                        // });
+                    },
+                    getIndex: function (index) {
+                        this.searchIndex = index;
+                    }
+                }
+            });
+
+            var vmone = new Vue({
+                el: '#uinput',
+                data: {
+                    id: '',
+                    cellid: '',
+                    cellname: '',
+                    azi: '',
+                    mtilt: '',
+                    etilt: ''
+                },
+                methods: {
+
+                    submit: function () {
+                        var that = this;
+                        console.log(that);
+                        var temp = {
+                            id: that.id,
+                            cellid: that.cellid,
+                            cellname: that.cellname,
+                            azi: that.azi,
+                            mtilt: that.mtilt,
+                            etilt: that.etilt
+                        };
+                        that.$resource('/api/cell{/id}').update({ id: temp.id }, temp).then(function (res) {
+                            // console.log(JSON.parse(res));
+                            // that.myData = JSON.parse(res);
+                            console.log(res);
+                            // that.data = res.data;
+                        });
+                    },
+                }
+            });
+            window.vm = vm;
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        <div class="search-input" id="sinput">
+            <input type="text" v-model="keyword" @keyup="get($event)" @keydown.enter="search()">
+            <span class="search-reset" @click="clearInput()">&times;</span>
+            <button class="search-btn" @click="search()">搜索</button>
+
+            <div class="search-select">
+                <!-- transition-group也是vue2.0中的新特性,tag='ul'表示用ul包裹v-for出来的li -->
+                <transition-group name="itemfade" tag="ul" mode="out-in" v-cloak>
+                    <ul>
+                        <li v-for="value in myData" :class="{selectback:value.id==now}" v-text="value.cellname" class="search-select-option search-select-list"
+                            @mouseover="selectHover(value.id)" @click="selectClick(value)" :key="value.index">
+                        </li>
+                    </ul>
+                </transition-group>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="col-md-12"> -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-user"></span> 更新</h3>
+        </div>
+        <div class="panel-body">
+            <form id="uinput" action="#0" v-on:submit.prevent="submit">
+                <input type="hidden" v-text="id">
+                <div class="form-group">
+                    <label>Cell Id : </label>
+                    <p class="help-block" v-text="cellid"></p>
+                </div>
+                <div class="form-group">
+                    <label>Cell Name : </label>
+                    <input type="text" name="cellname" class="form-control" placeholder="Product name" v-model="cellname">
+                    <p class="help-block">Cell name</p>
+                </div>
+                <div class="form-group">
+                    <label>Azi</label>
+                    <input type="number" name="azi" class="form-control" placeholder="Azi" v-model="azi">
+                    <p class="help-block">Azi</p>
+                </div>
+                <div class="form-group">
+                    <label>Mtilt</label>
+                    <input type="number" name="mtilt" class="form-control" placeholder="Mtilt" v-model="mtilt">
+                    <p class="help-block">Mtilt</p>
+                </div>
+                <div class="form-group">
+                    <label>Etilt</label>
+                    <input type="number" name="etilt" class="form-control" placeholder="Etilt" v-model="etilt">
+                    <p class="help-block">Etilt</p>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- </div> -->
+
+</body>
+
+</html>

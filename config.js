@@ -1,7 +1,7 @@
 // config files:
 var config = {
     dialect: 'mysql',
-    database: 'sqtest',
+    database: 'tacells',
     username: 'root',
     password: 'root',
     host: 'localhost',
