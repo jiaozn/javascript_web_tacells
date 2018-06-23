@@ -1,0 +1,26 @@
+{ "name": "rest-koa",
+    "version": "1.0.0",
+    "description": "koa-html-rest-db",
+    "main": "app.js",
+    "scripts": {
+        "start": "node --use_strict app.js"
+    },
+    "keywords": [
+        "koa",
+        "rest",
+        "api",
+        "db"
+    ],
+    "author": "ZunnanJiao",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "koa": "2.0.0",
+        "koa-bodyparser": "3.2.0",
+        "koa-router": "7.0.0",
+        "nunjucks": "2.4.3",
+        "mime": "1.3.4",
+        "mz": "2.4.0",
+        "sequelize":"4.38.0",
+        "mysql2":"1.5.3"
+    }
+}
