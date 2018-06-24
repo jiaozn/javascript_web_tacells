@@ -8,6 +8,8 @@ const templating=require('./templating');
 
 const rest=require('./rest');
 
+const checkUserPermission=require('./myauth');
+
 const app=new Koa();
 
 //修改默认的console.log函数，改为 时间+str 形式
@@ -37,6 +39,16 @@ app.use(templating('views',{
 
 // 5.bind .rest() for ctx:如果请求的path以api开头，则给ctx增加了rest函数，以后ctx就可以直接使用rest返回json了
 app.use(rest.restify());
+
+app.use(async (ctx,next)=>{
+    console.log('开始检查');
+    if(await checkUserPermission(ctx)){
+        await next();
+    }else{
+        // ctx.response.status=403;
+        ctx.render('login.html');
+    }
+});
 
 //add controllers:自动引入controllers下的所有controller，并根据各个controller的exports内容，设置好自己匹配的路由
 app.use(controller());
