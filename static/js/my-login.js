@@ -47,7 +47,6 @@ function loginsubmit(){
 	$('#hheader').text(tok);
 	$.cookie('bup',bup);
 	$.cookie('tok',tok);
-	alert(tok);
 	$.ajax({
 		type: "POST",
 		url: "/api/isuser",
@@ -59,7 +58,6 @@ function loginsubmit(){
 		data: {name:susername,
 		password:spassword},
 		success: function (){
-		  alert('Thanks for your comment!');
 		  window.location.href = '/showcells';
 		}
 	  });
