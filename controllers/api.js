@@ -1,8 +1,8 @@
-const products=require('../products');
-
 const APIError=require('../rest').APIError;
 
 const kpids=require('../kpids');
+
+const users=require('../users');
 
 const dbrun=require('../dbrun');
 
@@ -65,8 +65,12 @@ module.exports={
         
         console.log('Update successfully : '+rows);
         ctx.rest(rows);
+    },
+    'POST /api/isuser':async (ctx,next)=>{
+        var u=await users.isUser(ctx.request.body.name,ctx.request.body.password);
+        console.log('api.js'+u);
+        ctx.rest(u);
     }
-
 
     // 'GET /api/kpis':async (ctx,next)=>{
     //     ctx.rest({
