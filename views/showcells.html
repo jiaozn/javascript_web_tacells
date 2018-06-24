@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/static/css/bootstrap.css">
     <link rel="stylesheet" href="/static/css/sbox.css">
     <script src="/static/js/jquery.min.js"></script>
-
+    <script src="/static/js/jquery.cookie.js"></script>
     <script src="/static/js/vue.min.js"></script>
     <script src="/static/js/vue-resource.min.js"></script>
     <script src="/static/js/bootstrap.js"></script>
@@ -24,6 +24,12 @@
                     keyword: '',//v-model绑定的输入框的value
                     now: -1,
                     searchIndex: 0
+                },
+                http: {
+                    // root: '/',
+                    headers: {
+                        "Authorization": $.cookie('tok')
+                    }
                 },
                 methods: {
                     // &event是实参，表示event对象
@@ -90,6 +96,12 @@
                     azi: '',
                     mtilt: '',
                     etilt: ''
+                },
+                http: {
+                    // root: '/',
+                    headers: {
+                        "Authorization": $.cookie('tok')
+                    }
                 },
                 methods: {
 

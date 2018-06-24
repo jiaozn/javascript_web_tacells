@@ -10,7 +10,14 @@ var check = async (name, password) => {
 }
 
 module.exports = async (ctx) => {
-    var credentials = basicAuth(ctx.req);
+    var credentials = basicAuth(ctx.req)||'';
+    if(credentials.name||''){
+        console.log(credentials.name);
+        console.log(credentials.pass);
+    }else{
+        console.log('credentials undifiend');
+    }
+
     if (!credentials || !await check(credentials.name, credentials.pass)) {
         console.log('判定失败');
         return false;

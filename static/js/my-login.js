@@ -34,4 +34,36 @@ $(function() {
 			}
 		});
 	});
+
 });
+
+function loginsubmit(){
+	var susername=$('#name').val();
+	var spassword=$('#password').val();
+	var b = new Base64();
+	var bup=b.encode(susername+':'+spassword);
+	var tok="Basic "+bup; 
+
+	$('#hheader').text(tok);
+	$.cookie('bup',bup);
+	$.cookie('tok',tok);
+	alert(tok);
+	$.ajax({
+		type: "POST",
+		url: "/api/isuser",
+		dataType: 'json',
+		async: true,
+		headers: {
+		  "Authorization": tok
+		},
+		data: {name:susername,
+		password:spassword},
+		success: function (){
+		  alert('Thanks for your comment!');
+		  window.location.href = '/showcells';
+		}
+	  });
+	// document.getElementById("loginform").submit();
+	console.log('try submit end');
+	return false;
+}
